@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Interface</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            background: linear-gradient(135deg, #e91e63 0%, #9c27b0 50%, #3f51b5 100%);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Elementos decorativos de fondo */
+        .bg-decoration {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+        }
+
+        .bg-circle-1 {
+            width: 300px;
+            height: 300px;
+            background: #e91e63;
+            top: -100px;
+            left: -50px;
+        }
+
+        .bg-circle-2 {
+            width: 200px;
+            height: 200px;
+            background: #9c27b0;
+            bottom: -50px;
+            right: -50px;
+        }
+
+        .bg-circle-3 {
+            width: 400px;
+            height: 400px;
+            background: #3f51b5;
+            top: 50%;
+            right: -200px;
+            transform: translateY(-50%);
+        }
+
+        .main-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .menu-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .menu-btn i {
+            color: white;
+            font-size: 18px;
+        }
+
+        /* Contenido principal */
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-avatar::before {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #e91e63, #9c27b0);
+            z-index: -1;
+        }
+
+        .profile-avatar i {
+            color: white;
+            font-size: 50px;
+            z-index: 1;
+        }
+
+        .profile-name {
+            color: #e91e63;
+            font-size: 24px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .profile-title {
+            color: white;
+            font-size: 32px;
+            font-weight: 300;
+            margin-bottom: 60px;
+        }
+
+        /* Contenedor de métricas */
+        .metrics-container {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 40px;
+            display: flex;
+            gap: 60px;
+            justify-content: center;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .metric {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Círculos de progreso */
+        .progress-circle {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .progress-circle svg {
+            width: 120px;
+            height: 120px;
+            transform: rotate(-90deg);
+        }
+
+        .progress-circle .bg-circle {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-width: 8;
+        }
+
+        .progress-circle .progress-bar {
+            fill: none;
+            stroke: #e91e63;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 283;
+            transition: stroke-dashoffset 2s ease-in-out;
+        }
+
+        .progress-circle.progress-75 .progress-bar {
+            stroke-dashoffset: 71;
+        }
+
+        .progress-circle.progress-85 .progress-bar {
+            stroke-dashoffset: 42;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .metric-dots {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #e91e63;
+            opacity: 0.3;
+        }
+
+        .dot.active {
+            opacity: 1;
+        }
+
+        /* Footer/Navigation */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(135deg, #e91e63 0%, #9c27b0 100%);
+            border-radius: 25px 25px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-btn {
+            width: 60px;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.3);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(0, 0, 0, 0.5);
+            transform: scale(1.1);
+        }
+
+        .nav-btn i {
+            color: white;
+            font-size: 24px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .header {
+                padding: 15px;
+            }
+
+            .content {
+                padding: 30px 15px;
+            }
+
+            .profile-avatar {
+                width: 100px;
+                height: 100px;
+                margin-bottom: 25px;
+            }
+
+            .profile-avatar i {
+                font-size: 40px;
+            }
+
+            .profile-name {
+                font-size: 20px;
+                margin-bottom: 8px;
+            }
+
+            .profile-title {
+                font-size: 26px;
+                margin-bottom: 40px;
+            }
+
+            .metrics-container {
+                flex-direction: column;
+                gap: 30px;
+                padding: 30px 20px;
+                margin-bottom: 30px;
+            }
+
+            .progress-circle {
+                width: 100px;
+                height: 100px;
+                margin-bottom: 15px;
+            }
+
+            .progress-circle svg {
+                width: 100px;
+                height: 100px;
+            }
+
+            .progress-text {
+                font-size: 20px;
+            }
+
+            .bg-circle-1,
+            .bg-circle-2,
+            .bg-circle-3 {
+                display: none;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .metrics-container {
+                padding: 25px 15px;
+            }
+
+            .profile-name {
+                font-size: 18px;
+                letter-spacing: 1px;
+            }
+
+            .profile-title {
+                font-size: 22px;
+            }
+        }
+
+        /* Animaciones */
+        .main-container {
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .profile-avatar {
+            animation: profilePulse 3s ease-in-out infinite;
+        }
+
+        @keyframes profilePulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 15px 40px rgba(233, 30, 99, 0.4);
+            }
+        }
+
+        .metrics-container {
+            animation: slideUp 1s ease-out 0.5s both;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Elementos decorativos de fondo -->
+    <div class="bg-decoration bg-circle-1"></div>
+    <div class="bg-decoration bg-circle-2"></div>
+    <div class="bg-decoration bg-circle-3"></div>
+
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <button class="menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Contenido principal -->
+        <div class="content">
+            <div class="profile-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+
+            <h2 class="profile-name">YOUR NAME</h2>
+            <h1 class="profile-title">Lorem Ipsum</h1>
+
+            <div class="metrics-container">
+                <div class="metric">
+                    <div class="progress-circle progress-75">
+                        <svg>
+                            <circle class="bg-circle" cx="60" cy="60" r="45"></circle>
+                            <circle class="progress-bar" cx="60" cy="60" r="45"></circle>
+                        </svg>
+                        <div class="progress-text">75%</div>
+                    </div>
+                    <div class="metric-dots">
+                        <div class="dot active"></div>
+                        <div class="dot active"></div>
+                        <div class="dot active"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="progress-circle progress-85">
+                        <svg>
+                            <circle class="bg-circle" cx="60" cy="60" r="45"></circle>
+                            <circle class="progress-bar" cx="60" cy="60" r="45"></circle>
+                        </svg>
+                        <div class="progress-text">85%</div>
+                    </div>
+                    <div class="metric-dots">
+                        <div class="dot active"></div>
+                        <div class="dot active"></div>
+                        <div class="dot active"></div>
+                        <div class="dot active"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navegación inferior -->
+        <div class="bottom-nav">
+            <button class="nav-btn">
+                <i class="fas fa-home"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Animación de los círculos de progreso al cargar
+        window.addEventListener('load', function() {
+            const progressCircles = document.querySelectorAll('.progress-circle');
+            
+            progressCircles.forEach((circle, index) => {
+                setTimeout(() => {
+                    circle.classList.add('animate');
+                    animateDots(circle);
+                }, index * 500);
+            });
+        });
+
+        // Animación de los puntos indicadores
+        function animateDots(circle) {
+            const dots = circle.parentElement.querySelectorAll('.dot');
+            const isProgress75 = circle.classList.contains('progress-75');
+            const activeDots = isProgress75 ? 3 : 4;
+            
+            dots.forEach((dot, index) => {
+                setTimeout(() => {
+                    if (index < activeDots) {
+                        dot.classList.add('active');
+                    }
+                }, index * 200);
+            });
+        }
+
+        // Interactividad del menú
+        document.querySelector('.menu-btn').addEventListener('click', function() {
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 150);
+            
+            // Simulación de apertura de menú
+            console.log('Menú abierto');
+        });
+
+        // Interactividad del botón home
+        document.querySelector('.nav-btn').addEventListener('click', function() {
+            this.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 150);
+            
+            // Simulación de navegación a home
+            console.log('Navegando a Home');
+        });
+
+        // Efecto de hover en las métricas
+        const metrics = document.querySelectorAll('.metric');
+        metrics.forEach(metric => {
+            metric.addEventListener('mouseenter', function() {
+                const progressCircle = this.querySelector('.progress-circle');
+                progressCircle.style.transform = 'scale(1.1)';
+                progressCircle.style.transition = 'transform 0.3s ease';
+            });
+
+            metric.addEventListener('mouseleave', function() {
+                const progressCircle = this.querySelector('.progress-circle');
+                progressCircle.style.transform = 'scale(1)';
+            });
+        });
+
+        // Actualización dinámica de progreso (demo)
+        setInterval(() => {
+            const progressBars = document.querySelectorAll('.progress-bar');
+            progressBars.forEach(bar => {
+                const currentOffset = parseFloat(bar.style.strokeDashoffset || bar.getAttribute('stroke-dashoffset') || '0');
+                const variation = (Math.random() - 0.5) * 10;
+                const newOffset = Math.max(0, Math.min(283, currentOffset + variation));
+                bar.style.strokeDashoffset = newOffset;
+            });
+        }, 5000);
+    </script>
+</body>
+</html>
